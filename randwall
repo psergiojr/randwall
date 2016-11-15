@@ -1,0 +1,18 @@
+#!/usr/bin/python3
+import random, re
+
+def rand_hex():
+    return ''.join([random.choice('0123456789ABCDEF') for x in \
+        range(6)])
+
+if __name__ == '__main__':
+    template = ''
+    with open('randwall.svg', 'r') as src:
+        template = src.read()
+    
+    with open('wall.svg', 'w') as wall:
+        tmp = template
+        for color in re.findall(r'#[0-9a-fA-F]{6}', template):
+            tmp = tmp.replace( color, '#'+rand_hex() )
+        wall.write( tmp )
+
