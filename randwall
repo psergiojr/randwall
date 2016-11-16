@@ -7,7 +7,7 @@ def rand_hex():
 
 if __name__ == '__main__':
     template = ''
-    with open('randwall.svg', 'r') as src:
+    with open('template.svg', 'r') as src:
         template = src.read()
     
     with open('wall.svg', 'w') as wall:
