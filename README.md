@@ -1,12 +1,35 @@
 # randwall
 
+(Pseudo) random geometric wallpaper generator
+
+## Implemented
+
+- Delaunay triangulation
+
+## TODO
+
+- Voronoi
+- Beehive pattern
+- Circle packing
+- Free random path
+- Self-avoiding path
+- Stripes (horizontal, vertical, concentric, etc.)
+- Config file
+- Optional automatic generation of PNGs (CairoSVG?)
+
+## Dependencies
+
+Delaunay Triangulation: SciPy
+
     sudo apt-get install python-scipy
 
 
-## Gerar SVG 
+## Generate SVG 
+
     python randwall > test.svg 
 
-## Gerar PNG
-    sudo  apt-get install librsvg2-bin     
+## Generate PNG
+
+	sudo  apt-get install librsvg2-bin     
     
     python randwall | rsvg-convert > test.png  
