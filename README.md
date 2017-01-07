@@ -13,7 +13,7 @@
 - Circle packing
 - Free random path
 - Self-avoiding path
-- Stripes (horizontal, vertical, concentric, etc.)
+- Stripes (horizontal, vertical, concentric, etc.) - **ongoing**
 - Config file
 - Optional automatic generation of PNGs (CairoSVG?)
 
