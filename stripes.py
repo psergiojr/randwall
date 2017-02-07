@@ -6,6 +6,7 @@ WIDTH = 1366
 HEIGHT = 768
 
 def rand_color(base=None, boundaries=50):
+    """Return a random color string in CSS hex format."""
     if base:
         red, green, blue = int(base[1:3], 16), int(base[3:5], 16), int(base[5:], 16)
         r = random.choice(range(red-boundaries, red+boundaries))
@@ -18,16 +19,17 @@ def rand_color(base=None, boundaries=50):
     return '#{:02x}{:02x}{:02x}'.format(r,g,b)
 
 def stripes():
+    """Return a SVG string with enough stripes to fill screen area."""
     columns = []
     while sum(columns) <= WIDTH:
         col_width = random.choice( range(int(WIDTH/10), int(WIDTH/2)) )
         columns.append( col_width )
     x = 0
-    base_color = rand_color()
+    # base_color = rand_color()
     for column in columns:
         print('<rect x="{x}" y="0" width="{col_width}" \
 height="{col_height}" style="fill:{color};stroke:none"\
-/>'.format(x=x, col_width=column, col_height=HEIGHT, color=rand_color(base_color)))
+/>'.format(x=x, col_width=column, col_height=HEIGHT, color=rand_color()))
         x += column
 
 if __name__ == '__main__':
