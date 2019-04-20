@@ -51,8 +51,12 @@ def generate_points():
             points.append([int(x), int(y)]);
     return points
 
-def delaunay(points):
-    return
+def delaunay_polygons(points):
+    delaunay_diagram=scipy.spatial.Delaunay(points)
+    tris=delaunay_raw.points[delaunay_raw.simplices]
+    polygons=[numpy.array(tri) for triang in tris]
+    return polygons
+
 
 
 
