@@ -1,10 +1,9 @@
-#!/usr/bin/env python
-from scipy.spatial import Delaunay
+#!/usr/bin/env python3
 import random
-import numpy
 import math
+import scipy.spatial
 
-CELL_SIZE = random.randrange(75, 250, 25)
+CELL_SIZE = random.randrange(50, 250, 25)
 WIDTH = 1920.0
 HEIGHT = 1080.0
 VARIANCE = 0.75
@@ -22,13 +21,11 @@ color1 = random.randrange(0, 180)
 color2 = random.randrange(0, 180)
 
 
-def centro(vertices):
-    return (
-       (vertices[0][0] + vertices[1][0] + vertices[2][0])/3.0,
-       (vertices[0][1] + vertices[1][1] + vertices[2][1])/3.0
-    )
+def centro(polygon):
+    return [sum(coords)/len(coords) for coords in polygon.T]
 
-def gradient(x, y):
+def gradient(coord):
+    x,y = map(int, coord)
     w = (WIDTH + (bleed_x * 2)) / 2.0
     h = (HEIGHT + (bleed_y * 2)) / 2.0
     r = math.hypot(abs(w - x) , abs(h - y))
@@ -36,7 +33,7 @@ def gradient(x, y):
     c = r/r_max * 255
     if(c > 255):
         c = 255
-    return '#%02x%02x%02x' % (c,color1,color2)
+    return '#%02x%02x%02x' % (int(c),int(color1),int(color2))
 
 def generate_points():
     w = WIDTH + bleed_x
@@ -54,27 +51,28 @@ def generate_points():
             points.append([int(x), int(y)]);
     return points
 
+def delaunay(points):
+    return
 
 
-np_points = numpy.array(generate_points())
-tri = Delaunay(np_points)
-triangules = np_points[tri.simplices.copy()]
 
-polys = []
-
-for vertices in triangules:
-    x,y = centro(vertices)
-    polys.append((gradient(x,y), vertices))
-
-# print triangules;
-# print polys;
-
-print '<svg xmlns="http://www.w3.org/2000/svg" width="%s" height="%s">' % (int(WIDTH), int(HEIGHT))
-for poly in polys:
-    str_out = '<path d="M'
-    color, vertice = poly
-    d = 'L'.join([','.join([str(y) for y in point]) for point in vertice])
-    print '<path d="M%sZ" fill="%s" stroke="%s" stroke-width="1.51"/>' % (d, color, color)
-print '</svg>'
+def voronoi_polygons(points):
+    polygons = []
+    voronoi_diagram = scipy.spatial.Voronoi(points)
+    for region in voronoi_diagram.regions:
+        if len(region)>0 and not region.__contains__(-1):
+            polygons.append(voronoi_diagram.vertices[region])
+    return polygons
 
 
+def make_svg(polygons):
+    print('<svg xmlns="http://www.w3.org/2000/svg" width="%s" height="%s">' % (int(WIDTH), int(HEIGHT)))
+    for polygon in polygons:
+        color = gradient(centro(polygon))
+        path = 'L'.join([','.join([str(y) for y in vertice]) for vertice in polygon])
+        print('<path d="M%sZ" fill="%s" stroke="%s" stroke-width="1.51"/>' % (path, color, "#ffffff"))
+    print('</svg>')
+
+points=generate_points()
+polygons=voronoi_polygons(points)
+make_svg(polygons)
