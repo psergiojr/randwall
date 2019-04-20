@@ -2,6 +2,8 @@
 import random
 import math
 import scipy.spatial
+from os import linesep as newline
+
 
 CELL_SIZE = random.randrange(50, 250, 25)
 WIDTH = 1920.0
@@ -70,13 +72,19 @@ def voronoi_polygons(points):
 
 
 def make_svg(polygons):
-    print('<svg xmlns="http://www.w3.org/2000/svg" width="%s" height="%s">' % (int(WIDTH), int(HEIGHT)))
+    svg=[]
+    svg.append('<svg xmlns="http://www.w3.org/2000/svg" width="%s" height="%s">' % (int(WIDTH), int(HEIGHT)))
     for polygon in polygons:
         color = gradient(centro(polygon))
         path = 'L'.join([','.join([str(y) for y in vertice]) for vertice in polygon])
-        print('<path d="M%sZ" fill="%s" stroke="%s" stroke-width="1.51"/>' % (path, color, "#ffffff"))
-    print('</svg>')
+        svg.append('<path d="M%sZ" fill="%s" stroke="%s" stroke-width="1.51"/>' % (path, color, color))
+    svg.append('</svg>')
+    return newline.join(svg)
 
 points=generate_points()
 polygons=voronoi_polygons(points)
-make_svg(polygons)
+wallpaper = make_svg(polygons)
+path="./wallpaper.svg"
+file=open(path, "w")
+file.write(wallpaper)
+file.close
