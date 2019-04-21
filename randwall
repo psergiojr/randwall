@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
--import random
--import math
--import scipy.spatial
--from os import linesep as newline
+import random
+import math
+import scipy.spatial
+from os import linesep as newline
 
 CELL_SIZE = random.randrange(50, 250, 25)
 WIDTH = 1920.0
@@ -20,9 +20,9 @@ color1 = random.randrange(0, 180)
 color2 = random.randrange(0, 180)
 
 
-def print_helptext(return=none)
+def print_helptext(errno = None):
     print ('test.py -i <inputfile> -o <outputfile>')
-    sys.exit(2)
+    sys.exit(errno)
 
 def main(argv):
     inputfile = ''
@@ -31,11 +31,11 @@ def main(argv):
         opts, args = getopt.gnu_getopt(argv,"hi:o:",["ifile=","ofile="])
     except getopt.GetoptError:
         print ('test.py -i <inputfile> -o <outputfile>')
-        sys.exit(2)
+        print_helptext(2)
     for opt, arg in opts:
         if opt == '-h':
             print ('test.py -i <inputfile> -o <outputfile>')
-            sys.exit()
+            print_helptext()
         if opt == '-o'
             
 
