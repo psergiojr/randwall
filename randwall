@@ -1,33 +1,50 @@
 #!/usr/bin/env python3
-import random
-import math
-import scipy.spatial
-from os import linesep as newline
-
+-import random
+-import math
+-import scipy.spatial
+-from os import linesep as newline
 
 CELL_SIZE = random.randrange(50, 250, 25)
 WIDTH = 1920.0
 HEIGHT = 1080.0
 VARIANCE = 0.75
 
-
 cells_x = int((WIDTH + 4 * CELL_SIZE) / CELL_SIZE)
 cells_y = int((HEIGHT + 4 * CELL_SIZE) / CELL_SIZE)
 
 bleed_x = ((cells_x * CELL_SIZE) - WIDTH) / 2.0
 bleed_y = ((cells_y * CELL_SIZE) - HEIGHT) / 2.0
-
 variance = CELL_SIZE * VARIANCE / 2.0
 
 color1 = random.randrange(0, 180)
 color2 = random.randrange(0, 180)
 
 
+def print_helptext(return=none)
+    print ('test.py -i <inputfile> -o <outputfile>')
+    sys.exit(2)
+
+def main(argv):
+    inputfile = ''
+    outputfile = ''
+    try:
+        opts, args = getopt.gnu_getopt(argv,"hi:o:",["ifile=","ofile="])
+    except getopt.GetoptError:
+        print ('test.py -i <inputfile> -o <outputfile>')
+        sys.exit(2)
+    for opt, arg in opts:
+        if opt == '-h':
+            print ('test.py -i <inputfile> -o <outputfile>')
+            sys.exit()
+        if opt == '-o'
+            
+
 def centro(polygon):
     return [sum(coords)/len(coords) for coords in polygon.T]
 
 def gradient(coord):
     x,y = map(int, coord)
+    random_light=0.8 + random.random()*0.2
     w = (WIDTH + (bleed_x * 2)) / 2.0
     h = (HEIGHT + (bleed_y * 2)) / 2.0
     r = math.hypot(abs(w - x) , abs(h - y))
@@ -35,7 +52,7 @@ def gradient(coord):
     c = r/r_max * 255
     if(c > 255):
         c = 255
-    return '#%02x%02x%02x' % (int(c),int(color1),int(color2))
+    return '#%02x%02x%02x' % (int(c*random_light),int(color1*random_light),int(color2*random_light))
 
 def generate_points():
     w = WIDTH + bleed_x
@@ -60,8 +77,6 @@ def delaunay_polygons(points):
     return polygons
 
 
-
-
 def voronoi_polygons(points):
     polygons = []
     voronoi_diagram = scipy.spatial.Voronoi(points)
@@ -81,10 +96,4 @@ def make_svg(polygons):
     svg.append('</svg>')
     return newline.join(svg)
 
-points=generate_points()
-polygons=voronoi_polygons(points)
-wallpaper = make_svg(polygons)
-path="./wallpaper.svg"
-file=open(path, "w")
-file.write(wallpaper)
-file.close
+points=generate_points() polygons=voronoi_polygons(points) wallpaper = make_svg(polygons) path="wallpaper.svg" file=open(path, "w") file.write(wallpaper) file.close
