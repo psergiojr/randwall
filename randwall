@@ -19,25 +19,30 @@ variance = CELL_SIZE * VARIANCE / 2.0
 color1 = random.randrange(0, 180)
 color2 = random.randrange(0, 180)
 
+path="./wallpaper.svg"
+write_to_disk=False
+
+
+
 
 def print_helptext(errno = None):
     print ('test.py -i <inputfile> -o <outputfile>')
     sys.exit(errno)
 
-def main(argv):
+def parse_opts(argv):
     inputfile = ''
     outputfile = ''
     try:
         opts, args = getopt.gnu_getopt(argv,"hi:o:",["ifile=","ofile="])
     except getopt.GetoptError:
-        print ('test.py -i <inputfile> -o <outputfile>')
         print_helptext(2)
     for opt, arg in opts:
         if opt == '-h':
-            print ('test.py -i <inputfile> -o <outputfile>')
             print_helptext()
-        if opt == '-o'
-            
+        if opt == '-o':
+            write_to_disk=true
+            if len(arg)>0:
+                path=arg 
 
 def centro(polygon):
     return [sum(coords)/len(coords) for coords in polygon.T]
@@ -90,16 +95,16 @@ def make_svg(polygons):
     svg=[]
     svg.append('<svg xmlns="http://www.w3.org/2000/svg" width="%s" height="%s">' % (int(WIDTH), int(HEIGHT)))
     for polygon in polygons:
-        color = gradient(centro(polygon))
+        fill_color   = gradient(centro(polygon)) 
+        stroke_color = gradient(centro(polygon))
         path = 'L'.join([','.join([str(y) for y in vertice]) for vertice in polygon])
-        svg.append('<path d="M%sZ" fill="%s" stroke="%s" stroke-width="1.51"/>' % (path, color, color))
+        svg.append('<path d="M%sZ" fill="%s" stroke="%s" stroke-width="1.51"/>' % (path, fill_color, stroke_color))
     svg.append('</svg>')
     return newline.join(svg)
 
 points=generate_points()
 polygons=voronoi_polygons(points)
 wallpaper = make_svg(polygons)
-path="./wallpaper.svg"
 file=open(path, "w")
 file.write(wallpaper)
 file.close
