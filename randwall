@@ -96,4 +96,10 @@ def make_svg(polygons):
     svg.append('</svg>')
     return newline.join(svg)
 
-points=generate_points() polygons=voronoi_polygons(points) wallpaper = make_svg(polygons) path="wallpaper.svg" file=open(path, "w") file.write(wallpaper) file.close
+points=generate_points()
+polygons=voronoi_polygons(points)
+wallpaper = make_svg(polygons)
+path="./wallpaper.svg"
+file=open(path, "w")
+file.write(wallpaper)
+file.close
