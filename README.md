@@ -27,6 +27,8 @@ Delaunay Triangulation: SciPy
 ## Generate SVG 
 
     python randwall > test.svg 
+    
+![example output](https://github.com/spacekatia/randwall/blob/master/test.svg)
 
 ## Generate PNG
 
