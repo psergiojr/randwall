@@ -1,34 +1,55 @@
-#!/usr/bin/env python
-from scipy.spatial import Delaunay
+#!/usr/bin/env python3
 import random
-import numpy
 import math
+import scipy.spatial
+from os import linesep as newline
 
-CELL_SIZE = random.randrange(75, 250, 25)
+CELL_SIZE = random.randrange(50, 250, 25)
 WIDTH = 1920.0
 HEIGHT = 1080.0
 VARIANCE = 0.75
-
 
 cells_x = int((WIDTH + 4 * CELL_SIZE) / CELL_SIZE)
 cells_y = int((HEIGHT + 4 * CELL_SIZE) / CELL_SIZE)
 
 bleed_x = ((cells_x * CELL_SIZE) - WIDTH) / 2.0
 bleed_y = ((cells_y * CELL_SIZE) - HEIGHT) / 2.0
-
 variance = CELL_SIZE * VARIANCE / 2.0
 
 color1 = random.randrange(0, 180)
 color2 = random.randrange(0, 180)
 
+path="./wallpaper.svg"
+write_to_disk=False
 
-def centro(vertices):
-    return (
-       (vertices[0][0] + vertices[1][0] + vertices[2][0])/3.0,
-       (vertices[0][1] + vertices[1][1] + vertices[2][1])/3.0
-    )
 
-def gradient(x, y):
+
+
+def print_helptext(errno = None):
+    print ('test.py -i <inputfile> -o <outputfile>')
+    sys.exit(errno)
+
+def parse_opts(argv):
+    inputfile = ''
+    outputfile = ''
+    try:
+        opts, args = getopt.gnu_getopt(argv,"hi:o:",["ifile=","ofile="])
+    except getopt.GetoptError:
+        print_helptext(2)
+    for opt, arg in opts:
+        if opt == '-h':
+            print_helptext()
+        if opt == '-o':
+            write_to_disk=true
+            if len(arg)>0:
+                path=arg 
+
+def centro(polygon):
+    return [sum(coords)/len(coords) for coords in polygon.T]
+
+def gradient(coord):
+    x,y = map(int, coord)
+    random_light=0.8 + random.random()*0.2
     w = (WIDTH + (bleed_x * 2)) / 2.0
     h = (HEIGHT + (bleed_y * 2)) / 2.0
     r = math.hypot(abs(w - x) , abs(h - y))
@@ -36,7 +57,7 @@ def gradient(x, y):
     c = r/r_max * 255
     if(c > 255):
         c = 255
-    return '#%02x%02x%02x' % (c,color1,color2)
+    return '#%02x%02x%02x' % (int(c*random_light),int(color1*random_light),int(color2*random_light))
 
 def generate_points():
     w = WIDTH + bleed_x
@@ -54,27 +75,36 @@ def generate_points():
             points.append([int(x), int(y)]);
     return points
 
+def delaunay_polygons(points):
+    delaunay_diagram=scipy.spatial.Delaunay(points)
+    tris=delaunay_raw.points[delaunay_raw.simplices]
+    polygons=[numpy.array(tri) for triang in tris]
+    return polygons
 
 
-np_points = numpy.array(generate_points())
-tri = Delaunay(np_points)
-triangules = np_points[tri.simplices.copy()]
-
-polys = []
-
-for vertices in triangules:
-    x,y = centro(vertices)
-    polys.append((gradient(x,y), vertices))
-
-# print triangules;
-# print polys;
-
-print '<svg xmlns="http://www.w3.org/2000/svg" width="%s" height="%s">' % (int(WIDTH), int(HEIGHT))
-for poly in polys:
-    str_out = '<path d="M'
-    color, vertice = poly
-    d = 'L'.join([','.join([str(y) for y in point]) for point in vertice])
-    print '<path d="M%sZ" fill="%s" stroke="%s" stroke-width="1.51"/>' % (d, color, color)
-print '</svg>'
+def voronoi_polygons(points):
+    polygons = []
+    voronoi_diagram = scipy.spatial.Voronoi(points)
+    for region in voronoi_diagram.regions:
+        if len(region)>0 and not region.__contains__(-1):
+            polygons.append(voronoi_diagram.vertices[region])
+    return polygons
 
 
+def make_svg(polygons):
+    svg=[]
+    svg.append('<svg xmlns="http://www.w3.org/2000/svg" width="%s" height="%s">' % (int(WIDTH), int(HEIGHT)))
+    for polygon in polygons:
+        fill_color   = gradient(centro(polygon)) 
+        stroke_color = gradient(centro(polygon))
+        path = 'L'.join([','.join([str(y) for y in vertice]) for vertice in polygon])
+        svg.append('<path d="M%sZ" fill="%s" stroke="%s" stroke-width="1.51"/>' % (path, fill_color, stroke_color))
+    svg.append('</svg>')
+    return newline.join(svg)
+
+points=generate_points()
+polygons=voronoi_polygons(points)
+wallpaper = make_svg(polygons)
+file=open(path, "w")
+file.write(wallpaper)
+file.close
